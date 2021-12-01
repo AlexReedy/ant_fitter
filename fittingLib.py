@@ -694,3 +694,15 @@ class FittingLibrary():
             plt.close()
 
         plt.close()
+
+    def fit_ant(self, path, toggle_show=True, toggle_save=True):
+        self.import_data(file=path)
+        self.plot_raw(save=toggle_save, show=toggle_show)
+        self.plot_mag(save=toggle_save, show=toggle_show)
+        self.plot_flux(save=toggle_save, show=toggle_show)
+        self.polyfit_sigma_clipping()
+        self.plot_sigma_clip(save=toggle_save, show=toggle_show)
+        self.get_average()
+        self.plot_avg(save=toggle_save, show=toggle_show)
+        self.get_fit_parameters()
+        self.plot_fit_parameters(save=toggle_save, show=toggle_show)
