@@ -143,7 +143,7 @@ class FittingLibrary():
         self.current_dir = os.path.abspath(dir_path)
 
         # Finds the data set based on the filename provided and creates a dataframe
-        data_path = os.path.abspath('/home/sedmdev/Research/ant_fitting/CRTS_Test_Data')
+        data_path = os.path.abspath('/home/sedmdev/Research/ant_fitter/CRTS_Test_Data')
         data_set_path = os.path.join(data_path, file)
         print(data_set_path)
         data = pd.read_csv(data_set_path, usecols=(0, 1, 2), delim_whitespace=True, header=None)
