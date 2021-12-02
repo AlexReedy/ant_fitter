@@ -19,4 +19,4 @@ fit.get_average()
 # fit.plot_avg()
 
 fit.get_fit_parameters()
-fit.plot_fit_parameters()
+fit.plot_fit_parameters(save=False)
