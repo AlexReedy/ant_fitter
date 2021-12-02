@@ -66,27 +66,44 @@ print(f'Length of Expdec Range: {len(expdec_range)}')
 print(f'Shape of Expdec Array: {expdec_range.shape}')
 print(f'Start Day in Expdec Range: {expdec_range.min()}')
 print(f'Max Day in Expdec Range: {expdec_range.max()}\n')
-print(f'{expdec_range[1]}')
+
 
 for i in range(len(gauss_range)):
     full_range.append(gauss_range[i])
 for i in range(len(expdec_range)):
     full_range.append(expdec_range[i])
 full_range = np.array(full_range)
-
+full_range = np.unique(full_range)
 
 print(f'Length of Full Range: {len(full_range)}')
 print(f'Start Day in Full Range: {full_range.min()}')
-print(f'End Day in Full Range: {full_range.max()}\n')
-
+print(f'End Day in Full Range: {full_range.max()}')
+fit_inflection_position = None
 for i in range(len(full_range)):
     if full_range[i] == peak_data_dict["time"]:
-        print(f'Peak Matched at Index: {i}')
+        fit_inflection_position = i
+print(f'Fit Inflection Position: {fit_inflection_position}')
+
+fit_values = []
+for i in range(len(full_range)):
+    if i <= fit_inflection_position:
+        fit_values.append(gaussian(rise_time=full_range[i],
+                                   amplitude=gauss_data_dict["A_g"],
+                                   rise_peaktime=peak_data_dict["time"],
+                                   stddev=gauss_data_dict["t_g"],
+                                   offset=gauss_data_dict["r_g"]))
+    if i >= fit_inflection_position:
+        fit_values.append(exp_dec(fall_time=full_range[i],
+                                  amplitude=expdec_data_dict["A_e"],
+                                  fall_peaktime=peak_data_dict["time"],
+                                  stddev=expdec_data_dict["t_e"],
+                                  offset=expdec_data_dict["r_e"]))
+print(len(fit_values))
 
 
 
 
-'''
+
 ax.set(xlabel='Modified Julian Day [MJD]', ylabel='Flux [Jy]')
 ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
 # plots just the data
@@ -138,6 +155,7 @@ ax.hlines(expdec_data_dict["r_e"],
           linestyles='--',
           linewidth=0.5)
 
-plt.show()
+# Plots the fit data:
+ax.plot()
 
-'''
+plt.show()
