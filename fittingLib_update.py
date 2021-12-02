@@ -553,7 +553,8 @@ class FittingLibrary():
 
         self.gauss_data_dict = {"t_0": self.avg_data[0][0],
                                 "t_f": self.peak_data_dict["time"],
-                                "t_g": np.std(self.avg_data[0][0:self.peak_data_dict["index"]]),
+                                #"t_g": np.std(self.avg_data[0][0:self.peak_data_dict["index"]]),
+                                "t_g": np.std(self.avg_data[0][0:self.num_offset_detections]),
                                 "r_g": np.mean(self.avg_data[1][0:self.num_offset_detections]),
                                 "A_g": self.peak_data_dict["amplitude"] - np.mean(
                                     self.avg_data[1][0:self.num_offset_detections]),
@@ -561,7 +562,8 @@ class FittingLibrary():
 
         self.expdec_data_dict = {"t_0": self.peak_data_dict["time"],
                                  "t_f": self.avg_data[0][len(self.avg_data) - 1],
-                                 "t_e": np.std(self.avg_data[0][self.peak_data_dict["index"]:]),
+                                 #"t_e": np.std(self.avg_data[0][self.peak_data_dict["index"]:]),
+                                 "t_e": np.std(self.avg_data[0][len(self.avg_data) - self.num_offset_detections:]),
                                  "r_e": np.mean(self.avg_data[1][len(self.avg_data) - self.num_offset_detections:]),
                                  "A_e": self.peak_data_dict["amplitude"] - np.mean(
                                      self.avg_data[1][len(self.avg_data) - self.num_offset_detections:]),
@@ -595,28 +597,28 @@ class FittingLibrary():
             self.full_range.append(gauss_range[i])
         for i in range(len(expdec_range)):
             self.full_range.append(expdec_range[i])
-        full_range = np.array(self.full_range)
-        full_range = np.unique(self.full_range)
+        self.full_range = np.array(self.full_range)
+        self.full_range = np.unique(self.full_range)
 
-        print(f'Length of Full Range: {len(full_range)}')
-        print(f'Start Day in Full Range: {full_range.min()}')
-        print(f'End Day in Full Range: {full_range.max()}')
+        print(f'Length of Full Range: {len(self.full_range)}')
+        print(f'Start Day in Full Range: {self.full_range.min()}')
+        print(f'End Day in Full Range: {self.full_range.max()}')
         fit_inflection_position = None
-        for i in range(len(full_range)):
-            if full_range[i] == self.peak_data_dict["time"]:
+        for i in range(len(self.full_range)):
+            if self.full_range[i] == self.peak_data_dict["time"]:
                 fit_inflection_position = i
         print(f'Fit Inflection Position: {fit_inflection_position}')
 
         self.fit_values = []
-        for i in range(len(full_range)):
+        for i in range(len(self.full_range)):
             if i <= fit_inflection_position:
-                self.fit_values.append(gaussian(rise_time=full_range[i],
+                self.fit_values.append(gaussian(rise_time=self.full_range[i],
                                                 amplitude=self.gauss_data_dict["A_g"],
                                                 rise_peaktime=self.peak_data_dict["time"],
                                                 stddev=self.gauss_data_dict["t_g"],
                                                 offset=self.gauss_data_dict["r_g"]))
-            if i >= fit_inflection_position:
-                self.fit_values.append(exp_dec(fall_time=full_range[i],
+            if i > fit_inflection_position:
+                self.fit_values.append(exp_dec(fall_time=self.full_range[i],
                                                amplitude=self.expdec_data_dict["A_e"],
                                                fall_peaktime=self.peak_data_dict["time"],
                                                stddev=self.expdec_data_dict["t_e"],
@@ -682,11 +684,21 @@ class FittingLibrary():
                   linewidth=0.5)
 
         # Plots the fit data:
+        #for i in range(len(self.full_range)):
+        #    ax.plot(self.full_range[i],
+        #            self.fit_values[i],
+        #            color='red',
+        #            marker='s',
+        #            ms=1,
+        #            linestyle='none',
+        #            )
+        #    plt.pause(.001)
+
         ax.plot(self.full_range,
                 self.fit_values,
-                color='black',
+                color='red',
                 linestyle='--',
-                linewidth=0.5)
+                linewidth=1)
 
         if save:
             plt.savefig(f'{self.current_dir}/Plots/{window_name}.png')
