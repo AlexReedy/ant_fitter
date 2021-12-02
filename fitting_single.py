@@ -1,4 +1,4 @@
-from fittingLib import *
+from fittingLib_update import *
 fit = FittingLibrary(pause=.5, offset_prct=20, sigma_coefficient=5)
 
 
@@ -19,4 +19,4 @@ fit.get_average()
 # fit.plot_avg()
 
 fit.get_fit_parameters()
-fit.plot_fit_parameters(save=False)
+#fit.plot_fit_parameters(save=False)

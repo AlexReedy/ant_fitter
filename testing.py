@@ -107,6 +107,8 @@ for i in range(len(full_range)):
                                   stddev=expdec_data_dict["t_e"],
                                   offset=expdec_data_dict["r_e"]))
 
+print(len(fit_values))
+
 
 ax.set(xlabel='Modified Julian Day [MJD]', ylabel='Flux [Jy]')
 ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
