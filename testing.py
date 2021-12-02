@@ -14,11 +14,19 @@ def exp_dec(fall_time, amplitude, fall_peaktime, stddev, offset):
 
 data_set_path = '/home/sedmdev/ANT_Fitting/1118060051368/Data/1118060051368_avg_data.dat'
 data = pd.read_csv(data_set_path, usecols=(0, 1, 2), header=None)
-data = data.sort_values(by=0, ascending=True, ignore_index=True)
+#data = data.sort_values(by=0, ascending=True, ignore_index=True)
 
-peak_data_dict = {"index": data[1].idxmax(),
-                  "time": data[0][data[1].idxmax()],
-                  "amplitude": data[1][data[1].idxmax()]}
+n_highest_val = 2
+data_flux_sorted = data.sort_values(by=1, ascending=True, ignore_index=True)
+n_highest_amplitude = data_flux_sorted[1][len(data_flux_sorted)-n_highest_val]
+n_highest_index = None
+for i in range(len(data)):
+    if data[1][i] == n_highest_amplitude:
+        n_highest_index = i
+
+
+#peak_data_dict = {"index": data[1].idxmax(), "time": data[0][data[1].idxmax()], "amplitude": data[1][data[1].idxmax()]}
+peak_data_dict = {"index": n_highest_index, "time": data[0][n_highest_index], "amplitude": data[1][n_highest_index]}
 
 offset_prct = 20
 num_offset_detections = int(np.round(len(data) * (offset_prct / 100)))
@@ -92,16 +100,12 @@ for i in range(len(full_range)):
                                    rise_peaktime=peak_data_dict["time"],
                                    stddev=gauss_data_dict["t_g"],
                                    offset=gauss_data_dict["r_g"]))
-    if i >= fit_inflection_position:
+    if i > fit_inflection_position:
         fit_values.append(exp_dec(fall_time=full_range[i],
                                   amplitude=expdec_data_dict["A_e"],
                                   fall_peaktime=peak_data_dict["time"],
                                   stddev=expdec_data_dict["t_e"],
                                   offset=expdec_data_dict["r_e"]))
-print(len(fit_values))
-
-
-
 
 
 ax.set(xlabel='Modified Julian Day [MJD]', ylabel='Flux [Jy]')
@@ -156,6 +160,10 @@ ax.hlines(expdec_data_dict["r_e"],
           linewidth=0.5)
 
 # Plots the fit data:
-ax.plot()
+ax.plot(full_range,
+        fit_values,
+        color='black',
+        linestyle='--',
+        linewidth=0.5)
 
 plt.show()
